@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use fnv::FnvHashMap as HashMap;
 
 // A made-up dynamic programming problem (unimportant).
 // This first implementation is a classic recursive solution with memoization.
@@ -6,7 +6,7 @@ use std::collections::HashMap;
 // dependencies, I'm trying to avoid that, since I'm trying to find an
 // optimization pattern when that isn't possible.
 pub fn foo1(x: u32, y: u32) -> u32 {
-    foo1_helper(x, y, &mut HashMap::new())
+    foo1_helper(x, y, &mut HashMap::with_hasher(Default::default()))
 }
 fn foo1_helper(x: u32, y: u32, cache: &mut HashMap<(u32, u32), u32>) -> u32 {
     if x == 0 || y == 0 {
@@ -38,11 +38,12 @@ pub fn foo2(x: u32, y: u32) -> u32 {
         SecondRec(u32, u32, u32),
         ThirdRec(u32, u32, u32, u32),
     }
-    let mut stack = vec![StackState::Initial(x, y)];
+    let mut stack = Vec::with_capacity((x + y) as usize);
+    stack.push(StackState::Initial(x, y));
     // this return value is used by the child to communicate the result back up
     let mut rv = 0;
     // same cache as before
-    let mut cache = HashMap::new();
+    let mut cache = HashMap::with_hasher(Default::default());
     // grab the top of the stack til nothing left
     while let Some(state) = stack.pop() {
         match state {
@@ -83,7 +84,11 @@ pub fn foo2(x: u32, y: u32) -> u32 {
 // Doing this all auto-magically with futures to build the generator, and using
 // the async_recursion crate to make it easier to handle the boxing.
 pub fn foo3(x: u32, y: u32) -> u32 {
-    futures::executor::block_on(foo3_helper(x, y, &mut HashMap::new()))
+    futures::executor::block_on(foo3_helper(
+        x,
+        y,
+        &mut HashMap::with_hasher(Default::default()),
+    ))
 }
 #[async_recursion::async_recursion]
 pub async fn foo3_helper(x: u32, y: u32, cache: &mut HashMap<(u32, u32), u32>) -> u32 {
@@ -105,9 +110,11 @@ pub async fn foo3_helper(x: u32, y: u32, cache: &mut HashMap<(u32, u32), u32>) -
 mod tests {
     #[test]
     fn foo() {
-        let n = 100;
         // hardcoded, known result
+        let n = 100;
         let res = 41;
+        // 100, 41
+        // 5000, 609
         assert_eq!(super::foo1(n, n), res);
         assert_eq!(super::foo2(n, n), res);
         assert_eq!(super::foo3(n, n), res);

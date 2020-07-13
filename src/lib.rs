@@ -28,7 +28,7 @@ fn foo1_helper(x: u32, y: u32, cache: &mut HashMap<(u32, u32), u32>) -> u32 {
 }
 
 // This second implementation is "optimizing" by manually managing the stack.
-// This avoid recursion by storing the stack on the heap in the form of a
+// This avoids recursion by storing the stack on the heap in the form of a
 // vector, and explicitly stating what to store between recursive calls
 pub fn foo2(x: u32, y: u32) -> u32 {
     // store x, y, and any previously computed recursive result

@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Sammy S"]
 edition = "2018"
 
+[dependencies]
+async-recursion = "0.3.1"
+futures = "0.3.5"
+
 [dev-dependencies]
 criterion = "0.3.3"
 

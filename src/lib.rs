@@ -80,6 +80,25 @@ pub fn foo2(x: u32, y: u32) -> u32 {
     rv
 }
 
+pub fn foo3(x: u32, y: u32) -> u32 {
+    futures::executor::block_on(foo3_helper(x, y, &mut HashMap::new()))
+}
+#[async_recursion::async_recursion]
+pub async fn foo3_helper(x: u32, y: u32, cache: &mut HashMap<(u32, u32), u32>) -> u32 {
+    if x == 0 || y == 0 {
+        1
+    } else if let Some(&res) = cache.get(&(x, y)) {
+        res
+    } else {
+        let tr = (foo3_helper(x - 1, y - 1, cache).await
+            + foo3_helper(x, y - 1, cache).await
+            + foo3_helper(x - 1, y, cache).await)
+            % 1000;
+        cache.insert((x, y), tr);
+        tr
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -89,5 +108,6 @@ mod tests {
         let res = 41;
         assert_eq!(super::foo1(n, n), res);
         assert_eq!(super::foo2(n, n), res);
+        assert_eq!(super::foo3(n, n), res);
     }
 }

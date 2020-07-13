@@ -1,0 +1,15 @@
+[package]
+name = "recursion_optimization"
+version = "0.1.0"
+authors = ["Sammy S"]
+edition = "2018"
+
+[dev-dependencies]
+criterion = "0.3.3"
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[lib]
+bench = false

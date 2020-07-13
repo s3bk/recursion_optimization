@@ -80,6 +80,8 @@ pub fn foo2(x: u32, y: u32) -> u32 {
     rv
 }
 
+// Doing this all auto-magically with futures to build the generator, and using
+// the async_recursion crate to make it easier to handle the boxing.
 pub fn foo3(x: u32, y: u32) -> u32 {
     futures::executor::block_on(foo3_helper(x, y, &mut HashMap::new()))
 }

@@ -8,4 +8,4 @@ In src/lib.rs:
 
 - foo1 is the naive implementation, and also the fastest
 - foo2 is the manually managed implementation, slightly slower
-- fo03 is the implementation using futures - very pretty, but slowest
+- foo3 is the implementation using futures - very pretty, but slowest
